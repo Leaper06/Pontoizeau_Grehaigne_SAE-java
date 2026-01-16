@@ -1,52 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="20dp">
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Détails" android:textColor="@color/white" android:textSize="24sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Détails"
+        android:textColor="@color/white"
+        android:textSize="24sp" />
 
-    <ImageView android:id="@+id/detail_logo"
-        android:layout_width="100dp" android:layout_height="100dp"
-        android:layout_marginTop="30dp" android:src="@android:drawable/btn_star" />
+    <ImageView
+        android:id="@+id/detail_logo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="30dp"
+        android:src="@android:drawable/btn_star" />
 
-    <TextView android:id="@+id/tv_detail_name"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" android:text="$nomService"
-        android:textColor="@color/white" android:textSize="20sp" android:textStyle="bold" />
+    <TextView
+        android:id="@+id/tv_detail_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="$nomService"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
-    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" android:background="@color/card_background"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/card_background"
         android:padding="10dp">
-        <TextView android:id="@+id/tv_detail_status"
-            android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="$etat" android:textColor="@color/white" />
-        <View android:layout_width="12dp" android:layout_height="12dp"
-            android:layout_gravity="center" android:layout_marginStart="8dp"
+
+        <TextView
+            android:id="@+id/tv_detail_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$etat"
+            android:textColor="@color/white" />
+
+        <View
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
             android:background="@drawable/status_dot" />
     </LinearLayout>
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:layout_marginTop="30dp"
-        android:background="@color/incident_blue" android:orientation="vertical"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="@color/incident_blue"
+        android:orientation="vertical"
         android:padding="15dp">
 
-        <TextView android:id="@+id/tv_detail_issue"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Dernière mise hors service : $typeProblème" android:textColor="@color/white" />
-
-        <TextView android:id="@+id/tv_detail_date"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" android:text="date : $dateProblème"
+        <TextView
+            android:id="@+id/tv_detail_issue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dernière mise hors service : $typeProblème"
             android:textColor="@color/white" />
 
-        <TextView android:id="@+id/tv_detail_res"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" android:text="état de résolution : $étatRes"
+        <TextView
+            android:id="@+id/tv_detail_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="date : $dateProblème"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_detail_res"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="état de résolution : $étatRes"
             android:textColor="@color/white" />
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="205dp"
+        android:layout_height="151dp">
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="311dp"
+        android:layout_height="108dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/imageButton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@android:drawable/ic_media_rew"
+                tools:layout_editor_absoluteX="128dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
 </LinearLayout>
