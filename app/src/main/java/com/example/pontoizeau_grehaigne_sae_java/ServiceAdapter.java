@@ -26,12 +26,40 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
 
     @Override
     public void onBindViewHolder(@NonNull ServiceViewHolder holder, int position) {
-        // On remplit la carte avec les données d'un service
+        // 1. Récupérer l'objet Service à cette position
         ServiceStatus service = serviceList.get(position);
+        // 2. Afficher les infos (comme avant)
         holder.tvName.setText(service.getNom());
         holder.imgLogo.setImageResource(service.getImageResId());
+        // "itemView" représente toute la carte (CardView)
+        holder.itemView.setOnClickListener(v -> {
+            // A. Créer l'Intent (De la carte actuelle -> Vers DetailActivity)
+            // On doit utiliser v.getContext() car nous ne sommes pas dans une Activity
+            android.content.Intent intent = new android.content.Intent(v.getContext(), DetailActivity.class);
 
-        // On pourra ici changer la couleur de la pastille plus tard
+            // B. Envoyer les données
+            intent.putExtra("EXTRA_NOM", service.getNom());
+            intent.putExtra("EXTRA_STATUT", service.getStatut());
+
+            // C. Lancer l'activite
+            v.getContext().startActivity(intent);
+        });
+        holder.itemView.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(v.getContext(), DetailActivity.class);
+
+            // On passe les infos de base
+            intent.putExtra("EXTRA_NOM", service.getNom());
+            intent.putExtra("EXTRA_STATUT", service.getStatut());
+
+            // --- ON AJOUTE LES NOUVELLES INFOS ---
+            intent.putExtra("EXTRA_DESC", service.getDescription());
+            intent.putExtra("EXTRA_DATE", service.getDate());
+            intent.putExtra("EXTRA_RES", service.getResolution());
+            // On peut aussi passer l'image !
+            intent.putExtra("EXTRA_IMAGE", service.getImageResId());
+
+            v.getContext().startActivity(intent);
+        });
     }
 
     @Override

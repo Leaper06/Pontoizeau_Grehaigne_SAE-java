@@ -5,14 +5,28 @@ public class ServiceStatus {
     private String statut;
     private int imageResId;
 
-    public ServiceStatus(String nom, String statut, int imageResId) {
+    // --- NOUVELLES VARIABLES ---
+    private String description;
+    private String date;
+    private String resolution;
+
+    // Mise à jour du constructeur pour accepter ces nouvelles infos
+    public ServiceStatus(String nom, String statut, int imageResId, String description, String date, String resolution) {
         this.nom = nom;
         this.statut = statut;
         this.imageResId = imageResId;
+        this.description = description;
+        this.date = date;
+        this.resolution = resolution;
     }
 
-    // Getters
+    // Getters existants...
     public String getNom() { return nom; }
     public String getStatut() { return statut; }
     public int getImageResId() { return imageResId; }
+
+    // --- NOUVEAUX GETTERS ---
+    public String getDescription() { return description; }
+    public String getDate() { return date; }
+    public String getResolution() { return resolution; }
 }

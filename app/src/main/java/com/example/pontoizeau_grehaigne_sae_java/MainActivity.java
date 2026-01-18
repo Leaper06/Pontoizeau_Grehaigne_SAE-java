@@ -40,10 +40,15 @@ public class MainActivity extends AppCompatActivity {
         // 5. Créer ta liste de services de test (Feature 2 de ton document)
         List<ServiceStatus> services = new ArrayList<>();
         // Note : utilise le nom exact de ton icône wifi (ex: wifi_ok)
-        services.add(new ServiceStatus("GitHub", "Opérationnel", R.drawable.github));
-        services.add(new ServiceStatus("Discord", "Indisponible", R.drawable.discord));
-        services.add(new ServiceStatus("Cloudflare", "Opérationnel", R.drawable.cloudflare));
-        services.add(new ServiceStatus("GitLab", "Dégradé", R.drawable.gitlab));
+        services.add(new ServiceStatus("GitHub", "Opérationnel", R.drawable.wifi_ok,
+                "Aucun incident signalé", "18/01/2025", "N/A"));
+        services.add(new ServiceStatus("Discord", "Indisponible", R.drawable.discord,
+                "Panne majeure des serveurs vocaux", "18/01/2025", "En cours de résolution"));
+        services.add(new ServiceStatus("Cloudflare", "Opérationnel", R.drawable.cloudflare,
+                "Trafic normal", "17/01/2025", "Résolu"));
+
+        services.add(new ServiceStatus("GitLab", "Dégradé", R.drawable.gitlab,
+                "Lenteurs sur les CI/CD Pipelines", "16/01/2025", "Investigué"));
 
         // 6. Lier l'Adapter
         ServiceAdapter adapter = new ServiceAdapter(services);
