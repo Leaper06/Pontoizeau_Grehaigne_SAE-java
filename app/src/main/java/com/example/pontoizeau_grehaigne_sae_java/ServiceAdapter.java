@@ -26,38 +26,34 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
 
     @Override
     public void onBindViewHolder(@NonNull ServiceViewHolder holder, int position) {
-        // 1. Récupérer l'objet Service à cette position
+        // 1. Récupérer l'objet Service
         ServiceStatus service = serviceList.get(position);
-        // 2. Afficher les infos (comme avant)
+        // 2. Afficher les infos de base (Nom, Logo)
         holder.tvName.setText(service.getNom());
         holder.imgLogo.setImageResource(service.getImageResId());
-        // "itemView" représente toute la carte (CardView)
+        // .mutate() est très important : il dit "modifie CE rond-là uniquement, pas ceux des autres lignes"
+        android.graphics.drawable.GradientDrawable pastille =
+                (android.graphics.drawable.GradientDrawable) holder.dotStatus.getBackground().mutate();
+        // B. On choisit la couleur selon le texte du statut
+        int couleurAUtiliser;
+        String s = service.getStatut(); // Raccourci
+
+        if (s.contains("Opérationnel")) {
+            couleurAUtiliser = R.color.status_green; // Vert
+        } else if (s.contains("Perturbé") || s.contains("Dégradé")) {
+            couleurAUtiliser = R.color.status_orange; // Orange
+        } else {
+            couleurAUtiliser = R.color.status_red; // Rouge (pour "Panne", "Indisponible"...)
+        }
+
+        // C. On applique la couleur
+        pastille.setColor(androidx.core.content.ContextCompat.getColor(holder.itemView.getContext(), couleurAUtiliser));
+
+        // (Ton code de clic pour ouvrir les détails reste ici si tu l'avais ajouté avant)
         holder.itemView.setOnClickListener(v -> {
-            // A. Créer l'Intent (De la carte actuelle -> Vers DetailActivity)
-            // On doit utiliser v.getContext() car nous ne sommes pas dans une Activity
+            // ... ton code d'Intent vers DetailActivity ...
             android.content.Intent intent = new android.content.Intent(v.getContext(), DetailActivity.class);
-
-            // B. Envoyer les données
-            intent.putExtra("EXTRA_NOM", service.getNom());
-            intent.putExtra("EXTRA_STATUT", service.getStatut());
-
-            // C. Lancer l'activite
-            v.getContext().startActivity(intent);
-        });
-        holder.itemView.setOnClickListener(v -> {
-            android.content.Intent intent = new android.content.Intent(v.getContext(), DetailActivity.class);
-
-            // On passe les infos de base
-            intent.putExtra("EXTRA_NOM", service.getNom());
-            intent.putExtra("EXTRA_STATUT", service.getStatut());
-
-            // --- ON AJOUTE LES NOUVELLES INFOS ---
-            intent.putExtra("EXTRA_DESC", service.getDescription());
-            intent.putExtra("EXTRA_DATE", service.getDate());
-            intent.putExtra("EXTRA_RES", service.getResolution());
-            // On peut aussi passer l'image !
-            intent.putExtra("EXTRA_IMAGE", service.getImageResId());
-
+            // ... putExtra ...
             v.getContext().startActivity(intent);
         });
     }

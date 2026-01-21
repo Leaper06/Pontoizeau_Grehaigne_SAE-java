@@ -27,7 +27,7 @@
             <View android:id="@+id/dot_status"
                 android:layout_width="12dp" android:layout_height="12dp"
                 android:layout_alignParentEnd="true" android:layout_centerVertical="true"
-                android:background="@drawable/status_dot" />
+                android:background="@drawable/status_ok" />
         </RelativeLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

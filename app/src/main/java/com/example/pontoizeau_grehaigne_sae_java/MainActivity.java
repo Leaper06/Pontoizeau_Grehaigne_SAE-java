@@ -16,24 +16,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.widget.Toast;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
-
-    // Liste des services
     private List<ServiceStatus> services;
-    // Adapter du RecyclerView
     private ServiceAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Activation du mode Edge-to-Edge
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // Gestion du padding pour les systemBars (bordures, notch, etc.)
-        View mainLayout = findViewById(R.id.main); // bouton page 2 retour en arrière
+        services = new ArrayList<>();
+        adapter = new ServiceAdapter(services);
+        View mainLayout = findViewById(R.id.main); // Assure-toi ue cet ID existe dans ton XML (voir étape 2)
         if (mainLayout != null) {
             ViewCompat.setOnApplyWindowInsetsListener(mainLayout, (v, insets) -> {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -63,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }).start();
-
         // 5. Créer la liste de services de test (Feature 2 de ton document)
         services = new ArrayList<>();
         // Note : l’icône Wi-Fi pour GitHub sera mise à jour après vérification Internet
@@ -101,8 +105,73 @@ public class MainActivity extends AppCompatActivity {
         ));
 
         // 6. Lier l'Adapter
-        adapter = new ServiceAdapter(services);
+        ServiceAdapter adapter = new ServiceAdapter(services);
         recyclerView.setAdapter(adapter);
+        loadGithubStatus();
+    }
+
+    // Méthode pour récupérer le statut GitHub via Volley
+    private void loadGithubStatus() {
+        String url = "https://www.githubstatus.com/api/v2/status.json";
+        // Request
+        // On dit qu'on veut un "JsonObject"
+        com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
+                com.android.volley.Request.Method.GET,
+                url,
+                null, // Pas de paramètres à envoyer
+                new com.android.volley.Response.Listener<org.json.JSONObject>() {
+                    @Override
+                    public void onResponse(org.json.JSONObject response) {
+                        try {
+                            // 3. On rentre dans l'objet "status" du JSON
+                            org.json.JSONObject statusObj = response.getJSONObject("status");
+
+                            // 4. On récupère les infos brutes
+                            String indicator = statusObj.getString("indicator"); // ex: "none", "minor", "major"
+                            String description = statusObj.getString("description"); // ex: "All Systems Operational"
+                            String updatedAt = response.getJSONObject("page").getString("updated_at"); // La date
+
+                            // 5. TRADUCTION : On transforme le code "indicator" en image Android
+                            // 1. On décide que la GROSSE image sera toujours le logo GitHub
+                            int iconRes = R.drawable.github;
+                            String etatText;
+                            // 2. On définit juste le texte (C'est lui qui pilotera la couleur de la pastille via l'Adapter !)
+                            if (indicator.equals("none")) {
+                                etatText = "Opérationnel"; // L'adapter verra ce mot -> Pastille Verte
+                            } else if (indicator.equals("minor")) {
+                                etatText = "Perturbé";     // L'adapter verra ce mot -> Pastille Orange
+                            } else {
+                                etatText = "Panne";        // Autre mot -> Pastille Rouge
+                            }
+                            // 3. On crée la carte
+                            services.add(0, new ServiceStatus(
+                                    "GitHub API",
+                                    etatText,   // "Opérationnel"
+                                    iconRes,    // R.drawable.github (Le logo)
+                                    description,
+                                    updatedAt,
+                                    "Voir site officiel"
+                            ));
+                            // 4. On rafraîchit
+                            adapter.notifyDataSetChanged();
+
+                        } catch (org.json.JSONException e) {
+                            e.printStackTrace(); // En cas d'erreur de lecture du JSON
+                        }
+                    }
+                },
+                new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(com.android.volley.VolleyError error) {
+                        // En cas d'erreur internet (pas de wifi, serveur HS...)
+                        // On pourrait ajouter un service "Erreur" ici
+                        error.printStackTrace();
+                    }
+                }
+        );
+
+        // 8. Ajouter la demande à la file d'attente du facteur (Volley)
+        com.android.volley.toolbox.Volley.newRequestQueue(this).add(request);
 
         // 7. Mettre à jour l’icône Wi-Fi GitHub au lancement
         updateWifiIcon();
