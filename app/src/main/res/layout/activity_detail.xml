@@ -51,7 +51,7 @@
             android:layout_height="12dp"
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
-            android:background="@drawable/status_dot" />
+            android:background="@drawable/status_ok" />
     </LinearLayout>
 
     <LinearLayout
