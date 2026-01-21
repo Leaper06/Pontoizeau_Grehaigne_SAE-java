@@ -1,6 +1,10 @@
 package com.example.pontoizeau_grehaigne_sae_java;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;          // <-- IMPORTANT
 import android.widget.TextView;
+import android.widget.ImageButton;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class DetailActivity extends AppCompatActivity {
@@ -11,6 +15,15 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         TextView tvName = findViewById(R.id.tv_detail_name);
         TextView tvStatus = findViewById(R.id.tv_detail_status);
+
+        ImageButton imageButton2 = findViewById(R.id.imageButton2);
+        imageButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // revient à l'activité précédente
+            }
+        });
+
 
         // 3. On récupère les données envoyées par la page précédente
         String nomRecu = getIntent().getStringExtra("EXTRA_NOM");
