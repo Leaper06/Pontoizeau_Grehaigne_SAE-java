@@ -10,7 +10,7 @@ public class ServiceStatus {
     private String date;
     private String resolution;
 
-    // Mise à jour du constructeur pour accepter ces nouvelles infos
+    // Constructeur
     public ServiceStatus(String nom, String statut, int imageResId, String description, String date, String resolution) {
         this.nom = nom;
         this.statut = statut;
@@ -20,7 +20,7 @@ public class ServiceStatus {
         this.resolution = resolution;
     }
 
-    // Getters existants...
+    // Getters existants
     public String getNom() { return nom; }
     public String getStatut() { return statut; }
     public int getImageResId() { return imageResId; }
@@ -29,4 +29,7 @@ public class ServiceStatus {
     public String getDescription() { return description; }
     public String getDate() { return date; }
     public String getResolution() { return resolution; }
+
+    // --- NOUVEAUX SETTERS ---
+    public void setImageResId(int imageResId) { this.imageResId = imageResId; }
 }
