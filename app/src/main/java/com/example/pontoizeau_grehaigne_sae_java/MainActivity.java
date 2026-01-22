@@ -29,8 +29,8 @@ import org.json.JSONObject;
 public class MainActivity extends AppCompatActivity {
     private List<ServiceStatus> services;
     private ServiceAdapter adapter;
-
     private ImageView wifiStatusIcon;
+    private ImageView refreshButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         wifiStatusIcon = findViewById(R.id.wifi_status);
+        refreshButton = findViewById(R.id.btn_refresh);
+
 
         services = new ArrayList<>();
         View mainLayout = findViewById(R.id.main); // Assure-toi ue cet ID existe dans ton XML (voir étape 2)
@@ -111,6 +113,9 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ServiceAdapter(services);
         recyclerView.setAdapter(adapter);
         loadGithubStatus();
+
+        // 7.bouton de rafraichissement
+        refreshButton.setOnClickListener(v -> refreshAll());
     }
 
     // Méthode pour récupérer le statut GitHub via Volley
@@ -209,6 +214,19 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             updateWifiIcon();
         }
+    };
+    /**
+     * Rafraîchit tous les éléments de l'écran
+     * (connexion Internet + statuts des services)
+     */
+    private void refreshAll() {
+        updateWifiIcon();     // Déjà existante
+        loadGithubStatus();   // Déjà existante
+
+        // PLUS TARD :
+        // loadDiscordStatus();
+        // loadCloudflareStatus();
+        // loadGitlabStatus();
     };
 
     @Override
