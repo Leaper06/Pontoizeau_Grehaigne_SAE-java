@@ -56,32 +56,38 @@ public class DetailActivity extends AppCompatActivity {
                 url,
                 null,
                 response -> {
+                    // Mouchard 1 : La réponse est arrivée
+                    // android.widget.Toast.makeText(this, "Réponse reçue !", android.widget.Toast.LENGTH_SHORT).show();
+
                     try {
                         JSONArray incidents = response.getJSONArray("incidents");
 
                         if (incidents.length() > 0) {
                             JSONObject latest = incidents.getJSONObject(0);
-
                             String issueName = latest.getString("name");
-                            String issueDate = latest.getString("created_at");
-                            String issueStatus = latest.getString("status");
+                            // ... (ton code de récupération) ...
 
-                            // Mise à jour de l'affichage avec les infos fraiches
                             TextView tvIssue = findViewById(R.id.tv_detail_issue);
-                            TextView tvDate = findViewById(R.id.tv_detail_date);
-                            TextView tvRes = findViewById(R.id.tv_detail_res);
+                            // ... (tes setText) ...
 
                             tvIssue.setText("Dernier incident : " + issueName);
-                            if (issueDate.length() >= 10) {
-                                tvDate.setText("Date : " + issueDate.substring(0, 10));
-                            }
-                            tvRes.setText("État de résolution : " + issueStatus);
+
+                            // Mouchard 2 : Succès !
+                            android.widget.Toast.makeText(this, "Mise à jour réussie !", android.widget.Toast.LENGTH_SHORT).show();
+                        } else {
+                            android.widget.Toast.makeText(this, "Aucun incident dans le JSON", android.widget.Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        // Mouchard 3 : Le JSON est mal écrit
+                        android.widget.Toast.makeText(this, "Erreur lecture JSON: " + e.getMessage(), android.widget.Toast.LENGTH_LONG).show();
                     }
                 },
-                error -> error.printStackTrace()
+                error -> {
+                    error.printStackTrace();
+                    // Mouchard 4 : Problème internet ou lien faux
+                    android.widget.Toast.makeText(this, "Erreur Internet: " + error.getMessage(), android.widget.Toast.LENGTH_LONG).show();
+                }
         );
 
         Volley.newRequestQueue(this).add(request);
