@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         services = new ArrayList<>();
-        View mainLayout = findViewById(R.id.main); // Assure-toi ue cet ID existe dans ton XML (voir étape 2)
+        View mainLayout = findViewById(R.id.main);
         if (mainLayout != null) {
             ViewCompat.setOnApplyWindowInsetsListener(mainLayout, (v, insets) -> {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -75,23 +75,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
         // 5. Créer la liste de services de test (Feature 2 de ton document)
         services = new ArrayList<>();
-        // Note : l’icône Wi-Fi pour GitHub sera mise à jour après vérification Internet
-        services.add(new ServiceStatus(
-                "GitHub",
-                "Opérationnel",
-                R.drawable.github, // rouge par défaut
-                "Aucun incident signalé",
-                "18/01/2025",
-                "N/A"
-        ));
-        services.add(new ServiceStatus(
-                "Discord",
-                "Indisponible",
-                R.drawable.discord,
-                "Panne majeure des serveurs vocaux",
-                "18/01/2025",
-                "En cours de résolution"
-        ));
+
         services.add(new ServiceStatus(
                 "Cloudflare",
                 "Opérationnel",
@@ -109,10 +93,11 @@ public class MainActivity extends AppCompatActivity {
                 "Investigé"
         ));
 
-        // 6. Lier l'Adapter
         adapter = new ServiceAdapter(services);
         recyclerView.setAdapter(adapter);
+        // APPELS API
         loadGithubStatus();
+        loadDiscordStatus();
 
         // 7.bouton de rafraichissement
         refreshButton.setOnClickListener(v -> refreshAll());
@@ -121,61 +106,52 @@ public class MainActivity extends AppCompatActivity {
     // Méthode pour récupérer le statut GitHub via Volley
     private void loadGithubStatus() {
         String url = "https://www.githubstatus.com/api/v2/status.json";
-        // Request
-        // On dit qu'on veut un "JsonObject"
-        com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
-                com.android.volley.Request.Method.GET,
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
                 url,
-                null, // Pas de paramètres à envoyer
-                new com.android.volley.Response.Listener<org.json.JSONObject>() {
-                    @Override
-                    public void onResponse(org.json.JSONObject response) {
-                        try {
-                            // 3. On rentre dans l'objet "status" du JSON
-                            org.json.JSONObject statusObj = response.getJSONObject("status");
+                null,
+                response -> {
+                    try {
+                        JSONObject statusObj = response.getJSONObject("status");
+                        String indicator = statusObj.getString("indicator");
+                        String description = statusObj.getString("description");
+                        String updatedAt = response.getJSONObject("page").getString("updated_at");
 
-                            // 4. On récupère les infos brutes
-                            String indicator = statusObj.getString("indicator"); // ex: "none", "minor", "major"
-                            String description = statusObj.getString("description"); // ex: "All Systems Operational"
-                            String updatedAt = response.getJSONObject("page").getString("updated_at"); // La date
-
-                            int iconRes = R.drawable.github;
-                            String etatText;
-                            // 2. On définit juste le texte (C'est lui qui pilotera la couleur de la pastille via l'Adapter !)
-                            if (indicator.equals("none")) {
-                                etatText = "Opérationnel"; // L'adapter verra ce mot -> Pastille Verte
-                            } else if (indicator.equals("minor")) {
-                                etatText = "Perturbé";     // L'adapter verra ce mot -> Pastille Orange
-                            } else {
-                                etatText = "Panne";        // Autre mot -> Pastille Rouge
-                            }
-
-                            // 4. On rafraîchit
-                            adapter.notifyDataSetChanged();
-
-                        } catch (org.json.JSONException e) {
-                            e.printStackTrace(); // En cas d'erreur de lecture du JSON
+                        String etatText;
+                        if (indicator.equals("none")) {
+                            etatText = "Opérationnel";
+                        } else if (indicator.equals("minor")) {
+                            etatText = "Perturbé";
+                        } else {
+                            etatText = "Panne";
                         }
+
+
+                        // On utilise .add(0, ...) pour l'ajouter tout en haut de la liste
+                        services.add(0, new ServiceStatus(
+                                "GitHub API",  // Nom spécifique
+                                etatText,
+                                R.drawable.github,
+                                description,
+                                updatedAt,
+                                "Voir site officiel"
+                        ));
+
+
+                        adapter.notifyDataSetChanged();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 },
-                new com.android.volley.Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(com.android.volley.VolleyError error) {
-                        // En cas d'erreur internet (pas de wifi, serveur HS...)
-                        error.printStackTrace();
-                        android.widget.Toast.makeText(MainActivity.this, "Erreur Internet: " + error.getMessage(), android.widget.Toast.LENGTH_LONG).show();
-                    }
+                error -> {
+                    error.printStackTrace();
+                    // Optionnel : Gérer l'erreur visuellement
                 }
         );
 
-        // 8. Ajouter la demande à la file d'attente du facteur (Volley)
-        com.android.volley.toolbox.Volley.newRequestQueue(this).add(request);
-
-        // 7. Mettre à jour l’icône Wi-Fi GitHub au lancement
-        updateWifiIcon();
-
-        // 8. Enregistrement du BroadcastReceiver pour mettre à jour l'icône Wi-Fi dynamiquement
-        registerReceiver(wifiReceiver, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
+        Volley.newRequestQueue(this).add(request);
     }
 
     /**
@@ -223,8 +199,7 @@ public class MainActivity extends AppCompatActivity {
         updateWifiIcon();     // Déjà existante
         loadGithubStatus();   // Déjà existante
 
-        // PLUS TARD :
-        // loadDiscordStatus();
+
         // loadCloudflareStatus();
         // loadGitlabStatus();
     };
@@ -234,5 +209,50 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         // Désenregistrement du BroadcastReceiver pour éviter les fuites mémoire
         unregisterReceiver(wifiReceiver);
+    }
+
+    private void loadDiscordStatus() {
+        String url = "https://discordstatus.com/api/v2/status.json";
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        JSONObject statusObj = response.getJSONObject("status");
+                        String indicator = statusObj.getString("indicator");
+                        String description = statusObj.getString("description");
+                        String updatedAt = response.getJSONObject("page").getString("updated_at");
+
+                        String etatText;
+                        if (indicator.equals("none")) {
+                            etatText = "Opérationnel";
+                        } else if (indicator.equals("minor")) {
+                            etatText = "Perturbé";
+                        } else {
+                            etatText = "Panne";
+                        }
+
+                        // On ajoute Discord à la liste
+                        services.add(new ServiceStatus(
+                                "Discord",
+                                etatText,
+                                R.drawable.discord,
+                                description,
+                                updatedAt,
+                                "Voir discordstatus.com"
+                        ));
+
+                        adapter.notifyDataSetChanged();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> error.printStackTrace()
+        );
+
+        Volley.newRequestQueue(this).add(request);
     }
 }

@@ -66,13 +66,19 @@ public class DetailActivity extends AppCompatActivity {
         if (resolution != null) tvRes.setText("Résolution : " + resolution);
         if (imageRes != 0) imgLogo.setImageResource(imageRes);
 
-        // Si on est sur la page de GitHub, on va chercher les détails supplémentaires (Incidents)
+
         if (nom != null && nom.contains("GitHub")) {
             loadGithubIncidents();
+        }
+        // --- AJOUTE ÇA ---
+        else if (nom != null && nom.contains("Discord")) {
+            loadDiscordIncidents();
         }
     }
 
     private void loadGithubIncidents() {
+        // J'ai mis ton URL npoint pour le test.
+        // Quand tu auras fini les tests, remets : "https://www.githubstatus.com/api/v2/incidents.json"
         String url = "https://www.githubstatus.com/api/v2/incidents.json";
 
         JsonObjectRequest request = new JsonObjectRequest(
@@ -80,40 +86,116 @@ public class DetailActivity extends AppCompatActivity {
                 url,
                 null,
                 response -> {
-                    // Mouchard 1 : La réponse est arrivée
-                    // android.widget.Toast.makeText(this, "Réponse reçue !", android.widget.Toast.LENGTH_SHORT).show();
-
                     try {
                         JSONArray incidents = response.getJSONArray("incidents");
 
                         if (incidents.length() > 0) {
                             JSONObject latest = incidents.getJSONObject(0);
-                            String issueName = latest.getString("name");
-                            // ... (ton code de récupération) ...
 
+                            // --- 1. Récupération des données brutes ---
+                            String issueName = latest.getString("name");
+                            String issueDate = latest.getString("created_at");
+                            String issueStatus = latest.getString("status");
+
+                            // --- 2. Traduction du statut (C'est ça qui corrige "Voir site officiel") ---
+                            String etatEnFrancais = issueStatus; // Valeur par défaut
+
+                            if (issueStatus.equals("resolved")) {
+                                etatEnFrancais = "Résolu";
+                            } else if (issueStatus.equals("investigating")) {
+                                etatEnFrancais = "Enquête en cours";
+                            } else if (issueStatus.equals("identified")) {
+                                etatEnFrancais = "Identifié";
+                            } else if (issueStatus.equals("monitoring")) {
+                                etatEnFrancais = "Sous surveillance";
+                            }
+
+                            // --- 3. Formatage de la date (ex: 2026-01-22 -> 22/01/2026) ---
+                            String datePropre = issueDate;
+                            if (issueDate.length() >= 10) {
+                                String annee = issueDate.substring(0, 4);
+                                String mois = issueDate.substring(5, 7);
+                                String jour = issueDate.substring(8, 10);
+                                datePropre = jour + "/" + mois + "/" + annee;
+                            }
+
+                            // --- 4. Mise à jour de l'affichage ---
                             TextView tvIssue = findViewById(R.id.tv_detail_issue);
-                            // ... (tes setText) ...
+                            TextView tvDate = findViewById(R.id.tv_detail_date);
+                            TextView tvRes = findViewById(R.id.tv_detail_res);
 
                             tvIssue.setText("Dernier incident : " + issueName);
+                            tvDate.setText("Date : " + datePropre);
 
-                            // Mouchard 2 : Succès !
-                            android.widget.Toast.makeText(this, "Mise à jour réussie !", android.widget.Toast.LENGTH_SHORT).show();
+                            // C'est cette ligne qui force le remplacement du texte par défaut !
+                            tvRes.setText("État : " + etatEnFrancais);
+
                         } else {
-                            android.widget.Toast.makeText(this, "Aucun incident dans le JSON", android.widget.Toast.LENGTH_SHORT).show();
+                            // Si la liste "incidents" est vide dans le JSON
+                            TextView tvIssue = findViewById(R.id.tv_detail_issue);
+                            tvIssue.setText("Aucun incident récent signalé.");
                         }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        // Mouchard 3 : Le JSON est mal écrit
                         android.widget.Toast.makeText(this, "Erreur lecture JSON: " + e.getMessage(), android.widget.Toast.LENGTH_LONG).show();
                     }
                 },
                 error -> {
                     error.printStackTrace();
-                    // Mouchard 4 : Problème internet ou lien faux
-                    android.widget.Toast.makeText(this, "Erreur Internet: " + error.getMessage(), android.widget.Toast.LENGTH_LONG).show();
+                    android.widget.Toast.makeText(this, "Erreur Internet", android.widget.Toast.LENGTH_SHORT).show();
                 }
         );
 
         Volley.newRequestQueue(this).add(request);
     }
-}
+    private void loadDiscordIncidents() {
+        String url = "https://discordstatus.com/api/v2/incidents.json";
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        JSONArray incidents = response.getJSONArray("incidents");
+
+                        if (incidents.length() > 0) {
+                            JSONObject latest = incidents.getJSONObject(0);
+
+                            // Récupération
+                            String issueName = latest.getString("name");
+                            String issueDate = latest.getString("created_at");
+                            String issueStatus = latest.getString("status");
+
+                            // Traduction
+                            String etatEnFrancais = issueStatus;
+                            if (issueStatus.equals("resolved")) etatEnFrancais = "Résolu";
+                            else if (issueStatus.equals("investigating")) etatEnFrancais = "Enquête en cours";
+                            else if (issueStatus.equals("monitoring")) etatEnFrancais = "Sous surveillance";
+
+                            // Date
+                            String datePropre = issueDate;
+                            if (issueDate.length() >= 10) {
+                                datePropre = issueDate.substring(8, 10) + "/" + issueDate.substring(5, 7) + "/" + issueDate.substring(0, 4);
+                            }
+
+                            // Affichage
+                            TextView tvIssue = findViewById(R.id.tv_detail_issue);
+                            TextView tvDate = findViewById(R.id.tv_detail_date);
+                            TextView tvRes = findViewById(R.id.tv_detail_res);
+
+                            tvIssue.setText("Dernier incident : " + issueName);
+                            tvDate.setText("Date : " + datePropre);
+                            tvRes.setText("État : " + etatEnFrancais);
+                        } else {
+                            TextView tvIssue = findViewById(R.id.tv_detail_issue);
+                            tvIssue.setText("Aucun incident récent.");
+                        }
+                    } catch (JSONException e) { e.printStackTrace(); }
+                },
+                error -> error.printStackTrace()
+        );
+        Volley.newRequestQueue(this).add(request);
+    }
+    }
