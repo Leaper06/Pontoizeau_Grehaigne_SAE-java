@@ -87,8 +87,6 @@ public class MainActivity extends AppCompatActivity {
                             String description = statusObj.getString("description"); // ex: "All Systems Operational"
                             String updatedAt = response.getJSONObject("page").getString("updated_at"); // La date
 
-                            // 5. TRADUCTION : On transforme le code "indicator" en image Android
-                            // 1. On décide que la GROSSE image sera toujours le logo GitHub
                             int iconRes = R.drawable.github;
                             String etatText;
                             // 2. On définit juste le texte (C'est lui qui pilotera la couleur de la pastille via l'Adapter !)
