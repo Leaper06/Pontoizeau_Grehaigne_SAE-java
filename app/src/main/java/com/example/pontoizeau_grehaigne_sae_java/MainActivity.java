@@ -15,6 +15,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.widget.ImageView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,15 +30,17 @@ public class MainActivity extends AppCompatActivity {
     private List<ServiceStatus> services;
     private ServiceAdapter adapter;
 
+    private ImageView wifiStatusIcon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        wifiStatusIcon = findViewById(R.id.wifi_status);
 
         services = new ArrayList<>();
-        adapter = new ServiceAdapter(services);
         View mainLayout = findViewById(R.id.main); // Assure-toi ue cet ID existe dans ton XML (voir étape 2)
         if (mainLayout != null) {
             ViewCompat.setOnApplyWindowInsetsListener(mainLayout, (v, insets) -> {
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         services.add(new ServiceStatus(
                 "GitHub",
                 "Opérationnel",
-                R.drawable.wifi_nok, // rouge par défaut
+                R.drawable.github, // rouge par défaut
                 "Aucun incident signalé",
                 "18/01/2025",
                 "N/A"
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         ));
 
         // 6. Lier l'Adapter
-        ServiceAdapter adapter = new ServiceAdapter(services);
+        adapter = new ServiceAdapter(services);
         recyclerView.setAdapter(adapter);
         loadGithubStatus();
     }
@@ -141,15 +144,7 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 etatText = "Panne";        // Autre mot -> Pastille Rouge
                             }
-                            // 3. On crée la carte
-                            services.add(0, new ServiceStatus(
-                                    "GitHub API",
-                                    etatText,   // "Opérationnel"
-                                    iconRes,    // R.drawable.github (Le logo)
-                                    description,
-                                    updatedAt,
-                                    "Voir site officiel"
-                            ));
+
                             // 4. On rafraîchit
                             adapter.notifyDataSetChanged();
 
@@ -192,18 +187,18 @@ public class MainActivity extends AppCompatActivity {
      * Doit être exécuté sur le thread UI
      */
     private void updateWifiIcon() {
-        // On lance dans un Thread pour ne pas bloquer l'UI
         new Thread(() -> {
             boolean internetOk = isInternetConnected();
             runOnUiThread(() -> {
-                if (services != null && !services.isEmpty()) {
-                    ServiceStatus github = services.get(0); // GitHub est à l’index 0
-                    github.setImageResId(internetOk ? R.drawable.wifi_ok : R.drawable.wifi_nok);
-                    adapter.notifyItemChanged(0); // rafraîchit uniquement GitHub
+                if (wifiStatusIcon != null) {
+                    wifiStatusIcon.setImageResource(
+                            internetOk ? R.drawable.wifi_ok : R.drawable.wifi_nok
+                    );
                 }
             });
         }).start();
     }
+
 
     /**
      * BroadcastReceiver pour détecter les changements de connexion réseau
