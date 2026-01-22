@@ -1,10 +1,21 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Bulles en arrière-plan -->
+    <com.example.pontoizeau_grehaigne_sae_java.bubbleView
+        android:id="@+id/bubbleView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Icône WiFi -->
     <ImageView
         android:id="@+id/wifi_status"
         android:layout_width="32dp"
@@ -14,25 +25,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView android:id="@+id/main_title"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Statut des services" android:textColor="@color/white" android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@drawable/wifi_ok"
-        app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@drawable/wifi_ok" />
+    <!-- Titre -->
+    <TextView
+        android:id="@+id/main_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Statut des services"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="@id/wifi_status"
+        app:layout_constraintBottom_toBottomOf="@id/wifi_status"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageView android:id="@+id/btn_refresh"
-        android:layout_width="32dp" android:layout_height="32dp"
-        android:layout_margin="16dp" android:src="@android:drawable/ic_menu_rotate"
-        app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" />
+    <!-- Bouton rafraîchir -->
+    <ImageView
+        android:id="@+id/btn_refresh"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_margin="16dp"
+        android:src="@android:drawable/ic_menu_rotate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Liste des services -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_services"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
         android:padding="8dp"
         app:layout_constraintTop_toBottomOf="@id/main_title"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
