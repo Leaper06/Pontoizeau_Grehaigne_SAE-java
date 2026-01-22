@@ -162,8 +162,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(com.android.volley.VolleyError error) {
                         // En cas d'erreur internet (pas de wifi, serveur HS...)
-                        // On pourrait ajouter un service "Erreur" ici
                         error.printStackTrace();
+                        android.widget.Toast.makeText(MainActivity.this, "Erreur Internet: " + error.getMessage(), android.widget.Toast.LENGTH_LONG).show();
                     }
                 }
         );

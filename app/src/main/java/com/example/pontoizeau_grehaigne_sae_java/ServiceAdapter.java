@@ -51,9 +51,18 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
 
         // (Ton code de clic pour ouvrir les détails reste ici si tu l'avais ajouté avant)
         holder.itemView.setOnClickListener(v -> {
-            // ... ton code d'Intent vers DetailActivity ...
             android.content.Intent intent = new android.content.Intent(v.getContext(), DetailActivity.class);
-            // ... putExtra ...
+
+            // --- ON AJOUTE LES DONNÉES ICI (C'est ce qui manquait) ---
+            intent.putExtra("EXTRA_NOM", service.getNom());
+            intent.putExtra("EXTRA_STATUT", service.getStatut());
+            intent.putExtra("EXTRA_IMAGE", service.getImageResId());
+
+            // Assure-toi que ces méthodes (Getters) existent dans ta classe ServiceStatus
+            intent.putExtra("EXTRA_DESC", service.getDescription());
+            intent.putExtra("EXTRA_DATE", service.getDate());
+            intent.putExtra("EXTRA_RES", service.getResolution());
+
             v.getContext().startActivity(intent);
         });
     }
