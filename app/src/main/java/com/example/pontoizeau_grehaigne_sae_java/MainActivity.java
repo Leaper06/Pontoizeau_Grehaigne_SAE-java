@@ -76,28 +76,14 @@ public class MainActivity extends AppCompatActivity {
         // 5. Créer la liste de services de test (Feature 2 de ton document)
         services = new ArrayList<>();
 
-        services.add(new ServiceStatus(
-                "Cloudflare",
-                "Opérationnel",
-                R.drawable.cloudflare,
-                "Trafic normal",
-                "17/01/2025",
-                "Résolu"
-        ));
-        services.add(new ServiceStatus(
-                "GitLab",
-                "Dégradé",
-                R.drawable.gitlab,
-                "Lenteurs sur les CI/CD Pipelines",
-                "16/01/2025",
-                "Investigé"
-        ));
 
         adapter = new ServiceAdapter(services);
         recyclerView.setAdapter(adapter);
         // APPELS API
         loadGithubStatus();
         loadDiscordStatus();
+        loadCloudflareStatus();
+        loadRedditStatus();
 
         // 7.bouton de rafraichissement
         refreshButton.setOnClickListener(v -> refreshAll());
@@ -196,8 +182,10 @@ public class MainActivity extends AppCompatActivity {
      * (connexion Internet + statuts des services)
      */
     private void refreshAll() {
-        updateWifiIcon();     // Déjà existante
-        loadGithubStatus();   // Déjà existante
+        updateWifiIcon();
+        loadGithubStatus();
+        loadCloudflareStatus();
+        loadRedditStatus();
 
 
         // loadCloudflareStatus();
@@ -254,5 +242,90 @@ public class MainActivity extends AppCompatActivity {
         );
 
         Volley.newRequestQueue(this).add(request);
+    }
+    // Méthode pour récupérer le statut Cloudflare
+    private void loadCloudflareStatus() {
+        String url = "https://www.cloudflarestatus.com/api/v2/status.json ";
+
+        com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
+                com.android.volley.Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        org.json.JSONObject statusObj = response.getJSONObject("status");
+                        String indicator = statusObj.getString("indicator");
+                        String description = statusObj.getString("description");
+                        String updatedAt = response.getJSONObject("page").getString("updated_at");
+
+                        // 1. Choix du texte et de la couleur
+                        String etatText;
+                        if (indicator.equals("none")) etatText = "Opérationnel";
+                        else if (indicator.equals("minor")) etatText = "Perturbé";
+                        else etatText = "Panne";
+
+                        // 2. Ajout à la liste
+                        services.add(new ServiceStatus(
+                                "Cloudflare",    // Nom
+                                etatText,        // Statut
+                                R.drawable.cloudflare, // Icône Cloudflare
+                                description,
+                                updatedAt,
+                                "Voir cloudflarestatus.com"
+                        ));
+
+                        // 3. Rafraîchir
+                        adapter.notifyDataSetChanged();
+
+                    } catch (org.json.JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> error.printStackTrace()
+        );
+
+        com.android.volley.toolbox.Volley.newRequestQueue(this).add(request);
+    }
+
+
+    private void loadRedditStatus() {
+        String url = "https://api.npoint.io/6bb4de2dc75e03fe6880";
+
+        com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
+                com.android.volley.Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        org.json.JSONObject statusObj = response.getJSONObject("status");
+                        String indicator = statusObj.getString("indicator");
+                        String description = statusObj.getString("description");
+                        String updatedAt = response.getJSONObject("page").getString("updated_at");
+
+                        String etatText;
+                        if (indicator.equals("none")) etatText = "Opérationnel";
+                        else if (indicator.equals("minor")) etatText = "Perturbé";
+                        else etatText = "Panne";
+
+                        // Ajout à la liste
+                        services.add(new ServiceStatus(
+                                "Reddit",
+                                etatText,
+                                R.drawable.reddit, // Attention : Il te faut l'image reddit.png !
+                                description,
+                                updatedAt,
+                                "Voir redditstatus.com"
+                        ));
+
+                        adapter.notifyDataSetChanged();
+
+                    } catch (org.json.JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> error.printStackTrace()
+        );
+
+        com.android.volley.toolbox.Volley.newRequestQueue(this).add(request);
     }
 }

@@ -69,10 +69,13 @@ public class DetailActivity extends AppCompatActivity {
 
         if (nom != null && nom.contains("GitHub")) {
             loadGithubIncidents();
-        }
-        // --- AJOUTE ÇA ---
-        else if (nom != null && nom.contains("Discord")) {
+        } else if (nom != null && nom.contains("Discord")) {
             loadDiscordIncidents();
+        }
+        else if (nom != null && nom.contains("Cloudflare")) {
+            loadCloudflareIncidents();
+        }        else if (nom != null && nom.contains("Reddit")) {
+            loadRedditIncidents();
         }
     }
 
@@ -197,5 +200,110 @@ public class DetailActivity extends AppCompatActivity {
                 error -> error.printStackTrace()
         );
         Volley.newRequestQueue(this).add(request);
+    }
+    private void loadCloudflareIncidents() {
+        String url = "https://www.cloudflarestatus.com/api/v2/incidents.json";
+
+        com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
+                com.android.volley.Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        org.json.JSONArray incidents = response.getJSONArray("incidents");
+
+                        if (incidents.length() > 0) {
+                            org.json.JSONObject latest = incidents.getJSONObject(0);
+
+                            // --- Récupération ---
+                            String issueName = latest.getString("name");
+                            String issueDate = latest.getString("created_at");
+                            String issueStatus = latest.getString("status");
+
+                            // --- Traduction ---
+                            String etatEnFrancais = issueStatus;
+                            if (issueStatus.equals("resolved")) etatEnFrancais = "Résolu";
+                            else if (issueStatus.equals("investigating")) etatEnFrancais = "Enquête en cours";
+                            else if (issueStatus.equals("monitoring")) etatEnFrancais = "Sous surveillance";
+                            else if (issueStatus.equals("identified")) etatEnFrancais = "Identifié";
+
+                            // --- Date ---
+                            String datePropre = issueDate;
+                            if (issueDate.length() >= 10) {
+                                datePropre = issueDate.substring(8, 10) + "/" + issueDate.substring(5, 7) + "/" + issueDate.substring(0, 4);
+                            }
+
+                            // --- Affichage ---
+                            TextView tvIssue = findViewById(R.id.tv_detail_issue);
+                            TextView tvDate = findViewById(R.id.tv_detail_date);
+                            TextView tvRes = findViewById(R.id.tv_detail_res);
+
+                            tvIssue.setText("Dernier incident : " + issueName);
+                            tvDate.setText("Date : " + datePropre);
+                            tvRes.setText("État : " + etatEnFrancais);
+
+                        } else {
+                            TextView tvIssue = findViewById(R.id.tv_detail_issue);
+                            tvIssue.setText("Aucun incident récent.");
+                        }
+                    } catch (org.json.JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> error.printStackTrace()
+        );
+
+        com.android.volley.toolbox.Volley.newRequestQueue(this).add(request);
+    }
+    private void loadRedditIncidents() {
+        String url = "https://api.npoint.io/6bb4de2dc75e03fe6880";
+
+        com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
+                com.android.volley.Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        org.json.JSONArray incidents = response.getJSONArray("incidents");
+
+                        if (incidents.length() > 0) {
+                            org.json.JSONObject latest = incidents.getJSONObject(0);
+
+                            String issueName = latest.getString("name");
+                            String issueDate = latest.getString("created_at");
+                            String issueStatus = latest.getString("status");
+
+                            // Traduction
+                            String etatEnFrancais = issueStatus;
+                            if (issueStatus.equals("resolved")) etatEnFrancais = "Résolu";
+                            else if (issueStatus.equals("investigating")) etatEnFrancais = "Enquête";
+                            else if (issueStatus.equals("identified")) etatEnFrancais = "Identifié";
+
+                            // Date
+                            String datePropre = issueDate;
+                            if (issueDate.length() >= 10) {
+                                datePropre = issueDate.substring(8, 10) + "/" + issueDate.substring(5, 7) + "/" + issueDate.substring(0, 4);
+                            }
+
+                            TextView tvIssue = findViewById(R.id.tv_detail_issue);
+                            TextView tvDate = findViewById(R.id.tv_detail_date);
+                            TextView tvRes = findViewById(R.id.tv_detail_res);
+
+                            tvIssue.setText("Dernier incident : " + issueName);
+                            tvDate.setText("Date : " + datePropre);
+                            tvRes.setText("État : " + etatEnFrancais);
+
+                        } else {
+                            TextView tvIssue = findViewById(R.id.tv_detail_issue);
+                            tvIssue.setText("Aucun incident récent.");
+                        }
+                    } catch (org.json.JSONException e) {
+                        e.printStackTrace();
+                    }
+                },
+                error -> error.printStackTrace()
+        );
+
+        com.android.volley.toolbox.Volley.newRequestQueue(this).add(request);
     }
     }
