@@ -182,14 +182,20 @@ public class MainActivity extends AppCompatActivity {
      * (connexion Internet + statuts des services)
      */
     private void refreshAll() {
+        // 1. ON VIDE LA LISTE AVANT DE RECHARGER
+        services.clear();
+        // 2. On prévient l'adaptateur que la liste est vide (pour effacer l'écran visuellement)
+        adapter.notifyDataSetChanged();
+        // 3. On recharge tout (Internet + APIs)
         updateWifiIcon();
+        // RELANCE LES APPELS API
         loadGithubStatus();
+        loadDiscordStatus();
         loadCloudflareStatus();
-        loadRedditStatus();
+        loadRedditStatus(); // Si tu l'as ajouté
 
-
-        // loadCloudflareStatus();
-        // loadGitlabStatus();
+        // Un petit message pour l'utilisateur
+        Toast.makeText(this, "Données actualisées", Toast.LENGTH_SHORT).show();
     };
 
     @Override
@@ -289,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void loadRedditStatus() {
-        String url = "https://api.npoint.io/6bb4de2dc75e03fe6880";
+        String url = "https://www.redditstatus.com/api/v2/status.json";
 
         com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
                 com.android.volley.Request.Method.GET,

@@ -25,13 +25,30 @@ public class DetailActivity extends AppCompatActivity {
         TextView tvName = findViewById(R.id.tv_detail_name);
         TextView tvStatus = findViewById(R.id.tv_detail_status);
 
+
         ImageButton imageButton2 = findViewById(R.id.imageButton2);
+        ImageView imgStatus = findViewById(R.id.iv_detail_status);
+        String statut = getIntent().getStringExtra("EXTRA_STATUT");
         imageButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish(); // revient à l'activité précédente
             }
         });
+        if (statut != null) {
+            tvStatus.setText(statut);
+
+            // 2. AJOUTE CE BLOC POUR CHANGER LA COULEUR
+            if (imgStatus != null) {
+                if (statut.equals("Opérationnel")) {
+                    imgStatus.setImageResource(R.drawable.status_ok);
+                } else if (statut.equals("Perturbé")) {
+                    imgStatus.setImageResource(R.drawable.status_pok);
+                } else {
+                    imgStatus.setImageResource(R.drawable.status_nok);
+                }
+            }
+        }
 
 
         // 3. On récupère les données envoyées par la page précédente
@@ -52,7 +69,7 @@ public class DetailActivity extends AppCompatActivity {
 
         // 2. Récupération des données envoyées par la MainActivity
         String nom = getIntent().getStringExtra("EXTRA_NOM");
-        String statut = getIntent().getStringExtra("EXTRA_STATUT");
+
         String description = getIntent().getStringExtra("EXTRA_DESC");
         String date = getIntent().getStringExtra("EXTRA_DATE");
         String resolution = getIntent().getStringExtra("EXTRA_RES");
@@ -256,7 +273,7 @@ public class DetailActivity extends AppCompatActivity {
         com.android.volley.toolbox.Volley.newRequestQueue(this).add(request);
     }
     private void loadRedditIncidents() {
-        String url = "https://api.npoint.io/6bb4de2dc75e03fe6880";
+        String url = "https://www.redditstatus.com/api/v2/status.json";
 
         com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
                 com.android.volley.Request.Method.GET,

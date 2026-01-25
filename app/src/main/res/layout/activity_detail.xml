@@ -46,13 +46,15 @@
             android:text="$etat"
             android:textColor="@color/white" />
 
-        <View
+        <ImageView
+            android:id="@+id/iv_detail_status"
             android:layout_width="12dp"
             android:layout_height="12dp"
             android:layout_gravity="center"
             android:layout_marginStart="8dp"
-            android:background="@drawable/status_ok" />
+            android:src="@drawable/status_ok" />
     </LinearLayout>
+    x
 
     <LinearLayout
         android:layout_width="match_parent"
