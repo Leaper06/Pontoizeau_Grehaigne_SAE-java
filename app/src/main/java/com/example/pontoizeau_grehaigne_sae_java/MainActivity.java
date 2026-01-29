@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                     // Internet fonctionne
                     Toast.makeText(this, "Internet OK", Toast.LENGTH_SHORT).show();
                     System.out.println("Internet OK");
+                    updateWifiIcon();
                 } else {
                     // Pas d'accès Internet
                     Toast.makeText(this, "Pas d'accès Internet", Toast.LENGTH_SHORT).show();
