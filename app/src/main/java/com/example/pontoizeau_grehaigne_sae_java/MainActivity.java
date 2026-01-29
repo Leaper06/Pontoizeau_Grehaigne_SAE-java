@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
     }
     // Méthode pour récupérer le statut Cloudflare
     private void loadCloudflareStatus() {
-        String url = "https://www.cloudflarestatus.com/api/v2/status.json ";
+        String url = "https://www.cloudflarestatus.com/api/v2/status.json";
 
         com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
                 com.android.volley.Request.Method.GET,

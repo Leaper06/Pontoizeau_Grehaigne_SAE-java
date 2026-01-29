@@ -273,7 +273,7 @@ public class DetailActivity extends AppCompatActivity {
         com.android.volley.toolbox.Volley.newRequestQueue(this).add(request);
     }
     private void loadRedditIncidents() {
-        String url = "https://www.redditstatus.com/api/v2/status.json";
+        String url = "https://www.redditstatus.com/api/v2/incidents.json";
 
         com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
                 com.android.volley.Request.Method.GET,
