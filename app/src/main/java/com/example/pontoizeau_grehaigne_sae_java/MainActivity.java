@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         Volley.newRequestQueue(this).add(request);
-        // Ajoute la requête à la file Volley
+        // Ajoute la requête à Volley
     }
 
     private boolean isInternetConnected() {
@@ -240,7 +240,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private final BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
-        // Récepteur des changements réseau
         @Override
         public void onReceive(Context context, Intent intent) {
             updateWifiIcon();
@@ -267,7 +266,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        // Méthode appelée à la destruction
         super.onDestroy();
         unregisterReceiver(wifiReceiver);
         // Désenregistre le BroadcastReceiver
@@ -276,7 +274,6 @@ public class MainActivity extends AppCompatActivity {
     private void loadDiscordStatus() {
         // Charge le statut Discord
         String url = "https://discordstatus.com/api/v2/status.json";
-        // URL Discord
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,

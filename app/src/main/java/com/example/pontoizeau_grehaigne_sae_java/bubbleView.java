@@ -1,47 +1,25 @@
+//Code plus commenter que le reste car moins maitriser sur certaines notions
 package com.example.pontoizeau_grehaigne_sae_java;
-// Déclare le package dans lequel se trouve la classe
 
 import android.content.Context;
-// Permet d'utiliser le contexte Android
-
 import android.graphics.Canvas;
-// Permet de dessiner sur une surface graphique
-
 import android.graphics.Color;
-// Permet d'utiliser des couleurs
-
 import android.graphics.Paint;
-// Permet de définir comment on dessine (couleur, style, etc.)
-
 import android.util.AttributeSet;
-// Permet de récupérer les attributs XML de la vue
-
 import android.view.View;
-// Classe de base pour créer une vue personnalisée
-
 import java.util.ArrayList;
-// Permet d'utiliser une liste dynamique
-
 import java.util.Iterator;
-// Permet de parcourir une collection avec suppression sécurisée
-
 import java.util.List;
-// Interface List
-
 import java.util.Random;
-// Permet de générer des valeurs aléatoires
-
 public class bubbleView extends View {
-// Déclare une classe bubbleView qui hérite de View
-
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     // Déclare et instancie un objet Paint avec l'anti-aliasing activé
-
+    //l'anti-aliasing adoucit les bords en ajoutant des pixels intermédiaires avec des couleurs semi-transparentes.
     private List<Bubble> bubbles = new ArrayList<>();
     // Déclare et instancie une liste de bulles
 
     private Random random = new Random();
-    // Déclare et instancie un générateur de nombres aléatoires
+    // Déclare et instancie une variable de nombres aléatoires
 
     private Runnable runnable;
     // Déclare un Runnable pour gérer l'animation
