@@ -1,124 +1,214 @@
 package com.example.pontoizeau_grehaigne_sae_java;
+// Déclare le package de l'application
 
 import android.content.Intent;
+// Permet d'utiliser les intents
+
 import android.os.Bundle;
-import android.view.View;          // <-- IMPORTANT
+// Permet de gérer l'état de l'activité
+
+import android.view.View;
+// Permet d'utiliser la classe View
+
 import android.widget.TextView;
+// Permet d'utiliser des TextView
+
 import android.widget.ImageButton;
+// Permet d'utiliser des ImageButton
+
 import android.widget.ImageView;
+// Permet d'utiliser des ImageView
+
 import androidx.appcompat.app.AppCompatActivity;
+// Classe de base pour une activité
+
 import com.android.volley.Request;
+// Permet de définir le type de requête HTTP
+
 import com.android.volley.toolbox.JsonObjectRequest;
+// Permet de faire une requête JSON
+
 import com.android.volley.toolbox.Volley;
+// Permet de gérer les requêtes réseau
+
 import org.json.JSONArray;
+// Permet de manipuler des tableaux JSON
+
 import org.json.JSONException;
+// Permet de gérer les erreurs JSON
+
 import org.json.JSONObject;
+// Permet de manipuler des objets JSON
 
 public class DetailActivity extends AppCompatActivity {
+// Déclare la classe DetailActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Méthode appelée à la création de l'activité
         super.onCreate(savedInstanceState);
+        // Appelle le onCreate de la classe parente
         setContentView(R.layout.activity_detail);
+        // Associe le layout à l'activité
 
-        // 1. Récupération des éléments visuels (Vérifiez bien vos IDs dans activity_detail.xml)
         TextView tvName = findViewById(R.id.tv_detail_name);
-        TextView tvStatus = findViewById(R.id.tv_detail_status);
+        // Déclare et initialise le TextView du nom
 
+        TextView tvStatus = findViewById(R.id.tv_detail_status);
+        // Déclare et initialise le TextView du statut
 
         ImageButton imageButton2 = findViewById(R.id.imageButton2);
+        // Déclare et initialise le bouton retour
+
         ImageView imgStatus = findViewById(R.id.iv_detail_status);
+        // Déclare et initialise l'image du statut
+
         String statut = getIntent().getStringExtra("EXTRA_STATUT");
+        // Récupère le statut envoyé par l'activité précédente
+
         imageButton2.setOnClickListener(new View.OnClickListener() {
+            // Ajoute un écouteur de clic
             @Override
             public void onClick(View v) {
-                finish(); // revient à l'activité précédente
+                // Méthode appelée lors du clic
+                finish();
+                // Ferme l'activité actuelle
             }
         });
-        if (statut != null) {
-            tvStatus.setText(statut);
 
-            // 2. AJOUTE CE BLOC POUR CHANGER LA COULEUR
+        if (statut != null) {
+            // Vérifie que le statut n'est pas nul
+            tvStatus.setText(statut);
+            // Affiche le statut
+
             if (imgStatus != null) {
+                // Vérifie que l'image existe
                 if (statut.equals("Opérationnel")) {
+                    // Si le statut est opérationnel
                     imgStatus.setImageResource(R.drawable.status_ok);
+                    // Affiche l'image OK
                 } else if (statut.equals("Perturbé")) {
+                    // Si le statut est perturbé
                     imgStatus.setImageResource(R.drawable.status_pok);
+                    // Affiche l'image partiellement OK
                 } else {
+                    // Dans les autres cas
                     imgStatus.setImageResource(R.drawable.status_nok);
+                    // Affiche l'image NOK
                 }
             }
         }
 
-
-        // 3. On récupère les données envoyées par la page précédente
         String nomRecu = getIntent().getStringExtra("EXTRA_NOM");
-        String statutRecu = getIntent().getStringExtra("EXTRA_STATUT");
+        // Récupère le nom envoyé
 
-        // 4. On affiche les données
+        String statutRecu = getIntent().getStringExtra("EXTRA_STATUT");
+        // Récupère le statut envoyé
+
         if (nomRecu != null) {
+            // Vérifie que le nom n'est pas nul
             tvName.setText(nomRecu);
+            // Affiche le nom
         }
         if (statutRecu != null) {
+            // Vérifie que le statut n'est pas nul
             tvStatus.setText(statutRecu);
+            // Affiche le statut
         }
-        TextView tvDescription = findViewById(R.id.tv_detail_issue); // L'ID que tu as mis pour "Dernière mise hors service..."
-        TextView tvDate = findViewById(R.id.tv_detail_date);
-        TextView tvRes = findViewById(R.id.tv_detail_res);
-        ImageView imgLogo = findViewById(R.id.detail_logo);
 
-        // 2. Récupération des données envoyées par la MainActivity
+        TextView tvDescription = findViewById(R.id.tv_detail_issue);
+        // Déclare et initialise le TextView description
+
+        TextView tvDate = findViewById(R.id.tv_detail_date);
+        // Déclare et initialise le TextView date
+
+        TextView tvRes = findViewById(R.id.tv_detail_res);
+        // Déclare et initialise le TextView résolution
+
+        ImageView imgLogo = findViewById(R.id.detail_logo);
+        // Déclare et initialise l'image du logo
+
         String nom = getIntent().getStringExtra("EXTRA_NOM");
+        // Récupère le nom du service
 
         String description = getIntent().getStringExtra("EXTRA_DESC");
+        // Récupère la description
+
         String date = getIntent().getStringExtra("EXTRA_DATE");
+        // Récupère la date
+
         String resolution = getIntent().getStringExtra("EXTRA_RES");
+        // Récupère la résolution
+
         int imageRes = getIntent().getIntExtra("EXTRA_IMAGE", 0);
+        // Récupère l'identifiant de l'image
 
-        // 3. Affichage des données de base (celles qui viennent de la liste)
         if (nom != null) tvName.setText(nom);
-        if (statut != null) tvStatus.setText(statut);
-        if (description != null) tvDescription.setText("Problème : " + description);
-        if (date != null) tvDate.setText("Date : " + date);
-        if (resolution != null) tvRes.setText("Résolution : " + resolution);
-        if (imageRes != 0) imgLogo.setImageResource(imageRes);
+        // Affiche le nom
 
+        if (statut != null) tvStatus.setText(statut);
+        // Affiche le statut
+
+        if (description != null) tvDescription.setText("Problème : " + description);
+        // Affiche la description
+
+        if (date != null) tvDate.setText("Date : " + date);
+        // Affiche la date
+
+        if (resolution != null) tvRes.setText("Résolution : " + resolution);
+        // Affiche la résolution
+
+        if (imageRes != 0) imgLogo.setImageResource(imageRes);
+        // Affiche le logo
 
         if (nom != null && nom.contains("GitHub")) {
+            // Vérifie si le service est GitHub
             loadGithubIncidents();
+            // Appelle l'API GitHub
         } else if (nom != null && nom.contains("Discord")) {
+            // Vérifie si le service est Discord
             loadDiscordIncidents();
-        }
-        else if (nom != null && nom.contains("Cloudflare")) {
+        } else if (nom != null && nom.contains("Cloudflare")) {
+            // Vérifie si le service est Cloudflare
             loadCloudflareIncidents();
-        }        else if (nom != null && nom.contains("Reddit")) {
+        } else if (nom != null && nom.contains("Reddit")) {
+            // Vérifie si le service est Reddit
             loadRedditIncidents();
         }
     }
 
     private void loadGithubIncidents() {
-        // J'ai mis ton URL npoint pour le test.
-        // Quand tu auras fini les tests, remets : "https://www.githubstatus.com/api/v2/incidents.json"
+        // Méthode qui charge les incidents GitHub
         String url = "https://www.githubstatus.com/api/v2/incidents.json";
+        // Déclare l'URL de l'API GitHub
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
+                // Définit une requête GET
                 url,
+                // Passe l'URL
                 null,
+                // Pas de corps de requête
                 response -> {
+                    // Réponse reçue
                     try {
                         JSONArray incidents = response.getJSONArray("incidents");
+                        // Récupère le tableau des incidents
 
                         if (incidents.length() > 0) {
+                            // Vérifie s'il y a des incidents
                             JSONObject latest = incidents.getJSONObject(0);
+                            // Récupère le dernier incident
 
-                            // --- 1. Récupération des données brutes ---
                             String issueName = latest.getString("name");
+                            // Récupère le nom de l'incident
                             String issueDate = latest.getString("created_at");
+                            // Récupère la date
                             String issueStatus = latest.getString("status");
+                            // Récupère le statut
 
-                            // --- 2. Traduction du statut (C'est ça qui corrige "Voir site officiel") ---
-                            String etatEnFrancais = issueStatus; // Valeur par défaut
+                            String etatEnFrancais = issueStatus;
+                            // Initialise le statut en français
 
                             if (issueStatus.equals("resolved")) {
                                 etatEnFrancais = "Résolu";
@@ -130,8 +220,8 @@ public class DetailActivity extends AppCompatActivity {
                                 etatEnFrancais = "Sous surveillance";
                             }
 
-                            // --- 3. Formatage de la date (ex: 2026-01-22 -> 22/01/2026) ---
                             String datePropre = issueDate;
+                            // Initialise la date affichée
                             if (issueDate.length() >= 10) {
                                 String annee = issueDate.substring(0, 4);
                                 String mois = issueDate.substring(5, 7);
@@ -139,38 +229,48 @@ public class DetailActivity extends AppCompatActivity {
                                 datePropre = jour + "/" + mois + "/" + annee;
                             }
 
-                            // --- 4. Mise à jour de l'affichage ---
                             TextView tvIssue = findViewById(R.id.tv_detail_issue);
+                            // Récupère le TextView incident
                             TextView tvDate = findViewById(R.id.tv_detail_date);
+                            // Récupère le TextView date
                             TextView tvRes = findViewById(R.id.tv_detail_res);
+                            // Récupère le TextView état
 
                             tvIssue.setText("Dernier incident : " + issueName);
+                            // Affiche l'incident
                             tvDate.setText("Date : " + datePropre);
-
-                            // C'est cette ligne qui force le remplacement du texte par défaut !
+                            // Affiche la date
                             tvRes.setText("État : " + etatEnFrancais);
-
+                            // Affiche l'état
                         } else {
-                            // Si la liste "incidents" est vide dans le JSON
                             TextView tvIssue = findViewById(R.id.tv_detail_issue);
+                            // Récupère le TextView incident
                             tvIssue.setText("Aucun incident récent signalé.");
+                            // Affiche le message
                         }
-
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        // Affiche l'erreur
                         android.widget.Toast.makeText(this, "Erreur lecture JSON: " + e.getMessage(), android.widget.Toast.LENGTH_LONG).show();
+                        // Affiche un message d'erreur
                     }
                 },
                 error -> {
                     error.printStackTrace();
+                    // Affiche l'erreur réseau
                     android.widget.Toast.makeText(this, "Erreur Internet", android.widget.Toast.LENGTH_SHORT).show();
+                    // Affiche un message d'erreur
                 }
         );
 
         Volley.newRequestQueue(this).add(request);
+        // Ajoute la requête à la file d'attente
     }
+
     private void loadDiscordIncidents() {
+        // Méthode qui charge les incidents Discord
         String url = "https://discordstatus.com/api/v2/incidents.json";
+        // Déclare l'URL de l'API Discord
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -179,28 +279,25 @@ public class DetailActivity extends AppCompatActivity {
                 response -> {
                     try {
                         JSONArray incidents = response.getJSONArray("incidents");
-
+                        // Récupère les incidents
                         if (incidents.length() > 0) {
                             JSONObject latest = incidents.getJSONObject(0);
+                            // Récupère le dernier incident
 
-                            // Récupération
                             String issueName = latest.getString("name");
                             String issueDate = latest.getString("created_at");
                             String issueStatus = latest.getString("status");
 
-                            // Traduction
                             String etatEnFrancais = issueStatus;
                             if (issueStatus.equals("resolved")) etatEnFrancais = "Résolu";
                             else if (issueStatus.equals("investigating")) etatEnFrancais = "Enquête en cours";
                             else if (issueStatus.equals("monitoring")) etatEnFrancais = "Sous surveillance";
 
-                            // Date
                             String datePropre = issueDate;
                             if (issueDate.length() >= 10) {
                                 datePropre = issueDate.substring(8, 10) + "/" + issueDate.substring(5, 7) + "/" + issueDate.substring(0, 4);
                             }
 
-                            // Affichage
                             TextView tvIssue = findViewById(R.id.tv_detail_issue);
                             TextView tvDate = findViewById(R.id.tv_detail_date);
                             TextView tvRes = findViewById(R.id.tv_detail_res);
@@ -212,14 +309,20 @@ public class DetailActivity extends AppCompatActivity {
                             TextView tvIssue = findViewById(R.id.tv_detail_issue);
                             tvIssue.setText("Aucun incident récent.");
                         }
-                    } catch (JSONException e) { e.printStackTrace(); }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 },
                 error -> error.printStackTrace()
         );
         Volley.newRequestQueue(this).add(request);
+        // Ajoute la requête
     }
+
     private void loadCloudflareIncidents() {
+        // Méthode qui charge les incidents Cloudflare
         String url = "https://www.cloudflarestatus.com/api/v2/incidents.json";
+        // Déclare l'URL Cloudflare
 
         com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
                 com.android.volley.Request.Method.GET,
@@ -228,29 +331,24 @@ public class DetailActivity extends AppCompatActivity {
                 response -> {
                     try {
                         org.json.JSONArray incidents = response.getJSONArray("incidents");
-
                         if (incidents.length() > 0) {
                             org.json.JSONObject latest = incidents.getJSONObject(0);
 
-                            // --- Récupération ---
                             String issueName = latest.getString("name");
                             String issueDate = latest.getString("created_at");
                             String issueStatus = latest.getString("status");
 
-                            // --- Traduction ---
                             String etatEnFrancais = issueStatus;
                             if (issueStatus.equals("resolved")) etatEnFrancais = "Résolu";
                             else if (issueStatus.equals("investigating")) etatEnFrancais = "Enquête en cours";
                             else if (issueStatus.equals("monitoring")) etatEnFrancais = "Sous surveillance";
                             else if (issueStatus.equals("identified")) etatEnFrancais = "Identifié";
 
-                            // --- Date ---
                             String datePropre = issueDate;
                             if (issueDate.length() >= 10) {
                                 datePropre = issueDate.substring(8, 10) + "/" + issueDate.substring(5, 7) + "/" + issueDate.substring(0, 4);
                             }
 
-                            // --- Affichage ---
                             TextView tvIssue = findViewById(R.id.tv_detail_issue);
                             TextView tvDate = findViewById(R.id.tv_detail_date);
                             TextView tvRes = findViewById(R.id.tv_detail_res);
@@ -258,7 +356,6 @@ public class DetailActivity extends AppCompatActivity {
                             tvIssue.setText("Dernier incident : " + issueName);
                             tvDate.setText("Date : " + datePropre);
                             tvRes.setText("État : " + etatEnFrancais);
-
                         } else {
                             TextView tvIssue = findViewById(R.id.tv_detail_issue);
                             tvIssue.setText("Aucun incident récent.");
@@ -271,9 +368,13 @@ public class DetailActivity extends AppCompatActivity {
         );
 
         com.android.volley.toolbox.Volley.newRequestQueue(this).add(request);
+        // Ajoute la requête
     }
+
     private void loadRedditIncidents() {
+        // Méthode qui charge les incidents Reddit
         String url = "https://www.redditstatus.com/api/v2/incidents.json";
+        // Déclare l'URL Reddit
 
         com.android.volley.toolbox.JsonObjectRequest request = new com.android.volley.toolbox.JsonObjectRequest(
                 com.android.volley.Request.Method.GET,
@@ -282,7 +383,6 @@ public class DetailActivity extends AppCompatActivity {
                 response -> {
                     try {
                         org.json.JSONArray incidents = response.getJSONArray("incidents");
-
                         if (incidents.length() > 0) {
                             org.json.JSONObject latest = incidents.getJSONObject(0);
 
@@ -290,13 +390,11 @@ public class DetailActivity extends AppCompatActivity {
                             String issueDate = latest.getString("created_at");
                             String issueStatus = latest.getString("status");
 
-                            // Traduction
                             String etatEnFrancais = issueStatus;
                             if (issueStatus.equals("resolved")) etatEnFrancais = "Résolu";
                             else if (issueStatus.equals("investigating")) etatEnFrancais = "Enquête";
                             else if (issueStatus.equals("identified")) etatEnFrancais = "Identifié";
 
-                            // Date
                             String datePropre = issueDate;
                             if (issueDate.length() >= 10) {
                                 datePropre = issueDate.substring(8, 10) + "/" + issueDate.substring(5, 7) + "/" + issueDate.substring(0, 4);
@@ -309,7 +407,6 @@ public class DetailActivity extends AppCompatActivity {
                             tvIssue.setText("Dernier incident : " + issueName);
                             tvDate.setText("Date : " + datePropre);
                             tvRes.setText("État : " + etatEnFrancais);
-
                         } else {
                             TextView tvIssue = findViewById(R.id.tv_detail_issue);
                             tvIssue.setText("Aucun incident récent.");
@@ -322,5 +419,6 @@ public class DetailActivity extends AppCompatActivity {
         );
 
         com.android.volley.toolbox.Volley.newRequestQueue(this).add(request);
+        // Ajoute la requête
     }
-    }
+}
